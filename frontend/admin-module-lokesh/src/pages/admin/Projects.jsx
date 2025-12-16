@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getAllProjects, assignProject } from "../../services/projectService";
 import ProjectTable from "../../components/ProjectTable";
 import AssignModal from "../../components/AssignModal";
+import { getAllProjects, assignProject } from "../../services/projectService";
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
