@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-/* MOCK DATA */
+/* ---------------- MOCK DATA ---------------- */
 const freelancers = [
   "John Freelancer",
   "Anita Designer",
@@ -27,15 +27,15 @@ const initialProjects = [
     id: 2,
     name: "Mobile App UI",
     client: "Client B",
-    status: "Pending",
-    progress: 0,
+    status: "In Progress",
+    progress: 45,
     description: "UI design for a cross-platform mobile application.",
     budget: "₹30,000",
     deadline: "25 Dec 2025",
     priority: "High",
-    freelancer: "Not Assigned",
-    lastActive: "—",
-    lastUpdate: "Created today",
+    freelancer: "John Freelancer",
+    lastActive: "10:17 AM, 16 Dec 2025",
+    lastUpdate: "Updated 2 hours ago",
   },
 ];
 
@@ -44,12 +44,13 @@ export default function Projects() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedFreelancer, setSelectedFreelancer] = useState("");
+  const [filter, setFilter] = useState("All");
 
-  /* LOAD FROM LOCALSTORAGE */
+  /* ---------------- LOAD / SAVE ---------------- */
   useEffect(() => {
-    const storedProjects = localStorage.getItem("admin_projects");
-    if (storedProjects) {
-      setProjects(JSON.parse(storedProjects));
+    const stored = localStorage.getItem("admin_projects");
+    if (stored) {
+      setProjects(JSON.parse(stored));
     } else {
       setProjects(initialProjects);
       localStorage.setItem(
@@ -59,20 +60,16 @@ export default function Projects() {
     }
   }, []);
 
-  /* SAVE TO LOCALSTORAGE */
-  const saveProjects = (updatedProjects) => {
-    setProjects(updatedProjects);
-    localStorage.setItem(
-      "admin_projects",
-      JSON.stringify(updatedProjects)
-    );
+  const saveProjects = (updated) => {
+    setProjects(updated);
+    localStorage.setItem("admin_projects", JSON.stringify(updated));
   };
 
-  /* ASSIGN HANDLER */
+  /* ---------------- ASSIGN ---------------- */
   const handleAssign = () => {
     if (!selectedFreelancer || !selectedProject) return;
 
-    const updatedProjects = projects.map((p) =>
+    const updated = projects.map((p) =>
       p.id === selectedProject.id
         ? {
             ...p,
@@ -85,19 +82,53 @@ export default function Projects() {
         : p
     );
 
-    saveProjects(updatedProjects);
-
+    saveProjects(updated);
     setSelectedProject(
-      updatedProjects.find((p) => p.id === selectedProject.id)
+      updated.find((p) => p.id === selectedProject.id)
     );
-
     setShowAssignModal(false);
     setSelectedFreelancer("");
   };
 
+  /* ---------------- FILTER ---------------- */
+  const filteredProjects = projects.filter((p) => {
+    if (filter === "All") return true;
+    if (filter === "Unassigned") return p.freelancer === "Not Assigned";
+    return p.status === filter;
+  });
+
+  const statusBadge = (status) =>
+    status === "Pending"
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-blue-100 text-blue-700";
+
+  const priorityBadge = (priority) =>
+    priority === "High"
+      ? "bg-red-100 text-red-700"
+      : priority === "Medium"
+      ? "bg-orange-100 text-orange-700"
+      : "bg-gray-100 text-gray-700";
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Project Review</h1>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-semibold">Project Review</h1>
+
+      {/* FILTERS */}
+      <div className="flex gap-3 text-sm">
+        {["All", "Pending", "In Progress", "Unassigned"].map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1 rounded transition ${
+              filter === f
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-100 hover:bg-gray-200"
+            }`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
 
       {/* TABLE */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -107,64 +138,60 @@ export default function Projects() {
               <th className="p-3 text-left">Project</th>
               <th className="p-3 text-left">Client</th>
               <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Progress</th>
+              <th className="p-3 text-left">Priority</th>
               <th className="p-3 text-left">Action</th>
             </tr>
           </thead>
-
           <tbody>
-            {projects.map((project) => (
+            {filteredProjects.map((p) => (
               <tr
-                key={project.id}
-                className={`border-t ${
-                  selectedProject?.id === project.id
+                key={p.id}
+                className={`border-t transition-colors duration-200 ${
+                  selectedProject?.id === p.id
                     ? "bg-indigo-50"
                     : "hover:bg-gray-50"
                 }`}
               >
                 <td
                   className="p-3 cursor-pointer"
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => setSelectedProject(p)}
                 >
-                  {project.name}
+                  {p.name}
                 </td>
-
                 <td
                   className="p-3 cursor-pointer"
-                  onClick={() => setSelectedProject(project)}
+                  onClick={() => setSelectedProject(p)}
                 >
-                  {project.client}
+                  {p.client}
                 </td>
-
-                <td
-                  className="p-3 cursor-pointer"
-                  onClick={() => setSelectedProject(project)}
-                >
-                  <span className="px-2 py-1 rounded text-xs bg-blue-100 text-blue-700">
-                    {project.status}
+                <td className="p-3">
+                  <span
+                    className={`px-2 py-1 text-xs rounded ${statusBadge(
+                      p.status
+                    )}`}
+                  >
+                    {p.status}
                   </span>
                 </td>
-
-                <td
-                  className="p-3 cursor-pointer"
-                  onClick={() => setSelectedProject(project)}
-                >
-                  <div className="w-full bg-gray-200 rounded h-2">
-                    <div
-                      className="bg-indigo-600 h-2 rounded"
-                      style={{ width: `${project.progress}%` }}
-                    />
-                  </div>
+                <td className="p-3">
+                  <span
+                    className={`px-2 py-1 text-xs rounded ${priorityBadge(
+                      p.priority
+                    )}`}
+                  >
+                    {p.priority}
+                  </span>
                 </td>
-
                 <td
                   className="p-3 text-indigo-600 cursor-pointer hover:underline"
                   onClick={() => {
-                    setSelectedProject(project);
+                    setSelectedProject(p);
                     setShowAssignModal(true);
                   }}
                 >
-                  Assign
+                  {p.freelancer === "Not Assigned"
+                    ? "Assign"
+                    : "Reassign"}
                 </td>
               </tr>
             ))}
@@ -172,49 +199,38 @@ export default function Projects() {
         </table>
       </div>
 
+      {/* EMPTY STATE */}
       {!selectedProject && (
-        <div className="mt-6 text-center text-gray-500">
+        <p className="text-center text-gray-500">
           Select a project to view admin insights
-        </div>
+        </p>
       )}
 
+      {/* SELECTED PROJECT (FADE IN) */}
       {selectedProject && (
-        <div className="mt-6 bg-white rounded-lg shadow p-4">
-          <h2 className="font-semibold mb-2">Project Summary</h2>
+        <div className="bg-white rounded-lg shadow p-4 animate-fadeIn">
+          <h2 className="font-semibold text-lg mb-1">
+            Selected Project: {selectedProject.name}
+          </h2>
           <p className="text-sm text-gray-600 mb-3">
-            {selectedProject.description}
+            Status: {selectedProject.status} | Assigned to{" "}
+            {selectedProject.freelancer}
           </p>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <p className="text-gray-500">Client</p>
-              <p className="font-medium">{selectedProject.client}</p>
-            </div>
-            <div>
-              <p className="text-gray-500">Budget</p>
-              <p className="font-medium">{selectedProject.budget}</p>
-            </div>
-            <div>
-              <p className="text-gray-500">Deadline</p>
-              <p className="font-medium text-red-600">
-                {selectedProject.deadline}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-500">Assigned To</p>
-              <p className="font-medium">{selectedProject.freelancer}</p>
-            </div>
+            <Info label="Client" value={selectedProject.client} />
+            <Info label="Budget" value={selectedProject.budget} />
+            <Info label="Deadline" value={selectedProject.deadline} />
+            <Info label="Priority" value={selectedProject.priority} />
           </div>
         </div>
       )}
 
-      {/* ASSIGN MODAL */}
+      {/* ASSIGN MODAL (SCALE IN) */}
       {showAssignModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">
-              Assign Project
-            </h2>
+          <div className="bg-white rounded-lg p-6 w-full max-w-md animate-modalIn">
+            <h2 className="font-semibold mb-4">Assign Freelancer</h2>
 
             <select
               className="w-full border rounded p-2 mb-4"
@@ -231,23 +247,49 @@ export default function Projects() {
 
             <div className="flex justify-end gap-3">
               <button
-                className="px-4 py-2 text-gray-600"
+                className="px-4 py-2"
                 onClick={() => setShowAssignModal(false)}
               >
                 Cancel
               </button>
-
               <button
-                className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
                 disabled={!selectedFreelancer}
                 onClick={handleAssign}
+                className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
               >
-                Assign
+                Confirm
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* ANIMATIONS */}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes modalIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .animate-modalIn {
+          animation: modalIn 0.25s ease-out forwards;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function Info({ label, value }) {
+  return (
+    <div>
+      <p className="text-gray-500">{label}</p>
+      <p className="font-medium">{value}</p>
     </div>
   );
 }
