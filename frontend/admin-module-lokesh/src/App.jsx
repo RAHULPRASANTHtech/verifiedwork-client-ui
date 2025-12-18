@@ -54,6 +54,7 @@ export default function App() {
         <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
         <Route path="*" element={<Navigate to="/client/dashboard" />} />
       </Routes>
+      
     </BrowserRouter>
   );
 }
