@@ -14,14 +14,22 @@ export default function DailyTracking({
   return (
     <div className="space-y-8">
       {/* DATE INFO */}
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-        <p className="text-slate-300 text-sm">
-          📅 {selectedDate.toDateString()}
-        </p>
-        <p className="text-slate-400 text-xs">
-          Timezone: {timezone.label}
-        </p>
-      </div>
+      <div
+  className="
+    bg-white dark:bg-slate-800
+    border border-slate-200 dark:border-slate-700
+    rounded-lg p-4
+    transition-colors
+  "
+>
+  <p className="text-slate-700 dark:text-slate-300 text-sm">
+    📅 {selectedDate.toDateString()}
+  </p>
+  <p className="text-slate-500 dark:text-slate-400 text-xs">
+    Timezone: {timezone.label}
+  </p>
+</div>
+
 
       {/* ACTIVITY STATS */}
       <ActivityStats />

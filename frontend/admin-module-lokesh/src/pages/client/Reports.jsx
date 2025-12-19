@@ -30,28 +30,36 @@ const Reports = () => {
       .save();
   };
 
-  return (
-    <div className="text-slate-200">
-      <h1 className="text-2xl font-bold text-white mb-6">
-        Export Report
-      </h1>
+return (
+  <div>
+    <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+      Export Report
+    </h1>
 
-      <button
-        onClick={handleExportPDF}
-        className="flex items-center gap-2 bg-slate-800 border border-slate-700 px-4 py-2 rounded-lg hover:bg-slate-700 mb-6"
-      >
-        <Download className="w-4 h-4" />
-        Export Professional Report
-      </button>
+    <button
+      onClick={handleExportPDF}
+      className="
+        flex items-center gap-2
+        bg-white dark:bg-slate-800
+        border border-slate-200 dark:border-slate-700
+        text-slate-900 dark:text-slate-200
+        px-4 py-2 rounded-lg
+        hover:bg-slate-100 dark:hover:bg-slate-700
+        mb-6
+        transition
+      "
+    >
+      <Download className="w-4 h-4" />
+      Export Professional Report
+    </button>
 
-      {/* ALWAYS MOUNTED, OFFSCREEN */}
-      <div className="absolute -left-[9999px] top-0">
-        <div ref={reportRef}>
-          <ClientReportDocument />
-        </div>
+    {/* ALWAYS MOUNTED, OFFSCREEN */}
+    <div className="absolute -left-[9999px] top-0">
+      <div ref={reportRef}>
+        <ClientReportDocument />
       </div>
     </div>
-  );
+  </div>
+);
 };
-
 export default Reports;

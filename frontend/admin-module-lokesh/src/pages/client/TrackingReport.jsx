@@ -12,7 +12,7 @@ const TIMEZONES = [
 const ASSIGNED_USER = {
   name: "Rahul Prasanth",
   role: "Frontend Developer",
-  avatar: null, // later image URL
+  avatar: null,
 };
 
 export default function TrackingReport() {
@@ -32,32 +32,32 @@ export default function TrackingReport() {
       {/* HEADER */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             Tracking Report
           </h1>
-          <p className="text-slate-400">
+          <p className="text-slate-500 dark:text-slate-400">
             View activity based on selected period
           </p>
         </div>
 
-        {/* TOGGLE */}
-        <div className="flex bg-slate-800 rounded-lg p-1">
+        {/* MODE TOGGLE */}
+        <div className="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
           <button
             onClick={() => setMode("daily")}
-            className={`px-4 py-2 rounded-md text-sm ${
+            className={`px-4 py-2 rounded-md text-sm transition ${
               mode === "daily"
                 ? "bg-blue-600 text-white"
-                : "text-slate-300"
+                : "text-slate-600 dark:text-slate-300"
             }`}
           >
             Daily
           </button>
           <button
             onClick={() => setMode("weekly")}
-            className={`px-4 py-2 rounded-md text-sm ${
+            className={`px-4 py-2 rounded-md text-sm transition ${
               mode === "weekly"
                 ? "bg-blue-600 text-white"
-                : "text-slate-300"
+                : "text-slate-600 dark:text-slate-300"
             }`}
           >
             Weekly
@@ -69,55 +69,73 @@ export default function TrackingReport() {
       {mode === "daily" && (
         <div className="flex flex-wrap items-center justify-between gap-4">
           {/* USER INFO */}
-          <div className="flex items-center gap-3 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2">
-            <div className="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center text-sm font-semibold text-white">
+          <div className="flex items-center gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2">
+            <div className="w-9 h-9 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center text-sm font-semibold text-slate-900 dark:text-white">
               {ASSIGNED_USER.name.charAt(0)}
             </div>
 
             <div className="text-sm">
-              <p className="text-slate-200 font-medium">
+              <p className="text-slate-900 dark:text-slate-200 font-medium">
                 {ASSIGNED_USER.name}
               </p>
-              <p className="text-slate-400 text-xs">
+              <p className="text-slate-500 dark:text-slate-400 text-xs">
                 {ASSIGNED_USER.role}
               </p>
             </div>
           </div>
 
           {/* DATE NAV */}
-          <div className="flex items-center gap-3 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2">
-            <button
-              onClick={() => changeDate(-1)}
-              className="text-slate-300 hover:text-white"
-            >
-              ⬅
-            </button>
+<div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2">
 
-            <span className="text-sm text-slate-200">
-              {selectedDate.toDateString()}
-            </span>
+  {/* PREVIOUS DAY */}
+  <button
+    onClick={() => changeDate(-1)}
+    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+    title="Previous day"
+  >
+    ⬅
+  </button>
 
-            <button
-              onClick={() => changeDate(1)}
-              className="text-slate-300 hover:text-white"
-            >
-              ➡
-            </button>
-          </div>
+  {/* DATE PICKER */}
+  <input
+    type="date"
+    value={selectedDate.toISOString().split("T")[0]}
+    onChange={(e) => {
+      const picked = new Date(e.target.value);
+      if (!isNaN(picked)) setSelectedDate(picked);
+    }}
+    className="
+      bg-white dark:bg-slate-800
+      border border-slate-200 dark:border-slate-700
+      rounded-md px-2 py-1 text-sm
+      text-slate-900 dark:text-slate-200
+      focus:outline-none focus:ring-2 focus:ring-blue-500
+    "
+  />
+
+  {/* NEXT DAY */}
+  <button
+    onClick={() => changeDate(1)}
+    className="text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+    title="Next day"
+  >
+    ➡
+  </button>
+
+</div>
+
 
           {/* TIMEZONE */}
-          <div className="flex items-center gap-2 text-sm text-slate-300">
+          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
             🌍
             <select
               value={timezone.value}
               onChange={(e) =>
                 setTimezone(
-                  TIMEZONES.find(
-                    (t) => t.value === e.target.value
-                  )
+                  TIMEZONES.find((t) => t.value === e.target.value)
                 )
               }
-              className="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-slate-200"
+              className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded px-2 py-1 text-slate-900 dark:text-slate-200"
             >
               {TIMEZONES.map((tz) => (
                 <option key={tz.value} value={tz.value}>
@@ -129,20 +147,20 @@ export default function TrackingReport() {
 
           {/* ACTIONS */}
           <details className="relative">
-            <summary className="cursor-pointer bg-slate-800 border border-slate-700 px-4 py-2 rounded-lg text-sm text-slate-200 hover:bg-slate-700">
+            <summary className="cursor-pointer bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-lg text-sm text-slate-900 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700">
               ⚙ Actions
             </summary>
 
-            <div className="absolute right-0 mt-2 w-56 bg-slate-900 border border-slate-700 rounded-lg shadow-lg z-20">
+            <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-20">
               <button
-                className="w-full text-left px-4 py-2 hover:bg-slate-800 text-sm"
+                className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm"
                 onClick={() => window.location.reload()}
               >
                 🔄 Refresh
               </button>
 
               <button
-                className="w-full text-left px-4 py-2 hover:bg-slate-800 text-sm"
+                className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm"
                 onClick={() => setShowInactive((p) => !p)}
               >
                 {showInactive
