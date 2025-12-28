@@ -64,12 +64,7 @@ const ClientSidebar = () => {
                 end
               />
 
-              <NavItem
-                to="/client/reports"
-                label="Export Report"
-                small
-                end
-              />
+
             </div>
           )}
         </div>

@@ -22,10 +22,13 @@ const KPICard = ({ title, value, icon: Icon, colorClass }) => {
         </p>
       </div>
 
-      {/* Icon */}
-      <div className={`p-3 rounded-lg ${colorClass}`}>
-        <Icon className="w-6 h-6" />
-      </div>
+     {/* Icon (optional) */}
+{Icon && (
+  <div className={`p-3 rounded-lg ${colorClass}`}>
+    <Icon className="w-6 h-6" />
+  </div>
+)}
+
     </div>
   );
 };

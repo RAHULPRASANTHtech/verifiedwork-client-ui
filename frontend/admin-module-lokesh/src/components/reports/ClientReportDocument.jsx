@@ -1,30 +1,42 @@
 import React from "react";
 
-// Mock Data (later replaced by backend)
-import {
-  KPI_SUMMARY,
-  MOCK_TASKS,
-  MOCK_ACTIVITY_DATA,
-} from "../../services/reportMockData";
+/* ================= HELPERS ================= */
 
-const ClientReportDocument = () => {
+const formatMinutes = (minutes = 0) => {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h}h ${m}m`;
+};
+
+/* ================= COMPONENT ================= */
+
+const ClientReportDocument = ({
+  project = "Project Activity Report",
+  client = "Client",
+  periodLabel = "Report Summary",
+  summary = {
+    total_minutes: 0,
+    avg_activity: 0,
+    idle_minutes: 0,
+    screenshots: 0,
+  },
+  days = [], // array of daily rows
+}) => {
   const generatedDate = new Date().toLocaleDateString();
 
   return (
     <div className="bg-white text-gray-900 p-10 max-w-4xl mx-auto">
+
       {/* ================= COVER ================= */}
       <header className="mb-10 border-b pb-6">
         <h1 className="text-3xl font-bold mb-2">
-          Project Activity Report
+          {project}
         </h1>
-        <p className="text-gray-600">
-          E-Commerce Platform Redesign
-        </p>
 
         <div className="mt-4 text-sm text-gray-700 space-y-1">
-          <p><strong>Client:</strong> ABC Retail Pvt Ltd</p>
+          <p><strong>Client:</strong> {client}</p>
           <p><strong>Generated on:</strong> {generatedDate}</p>
-          <p><strong>Reporting Period:</strong> Weekly Summary</p>
+          <p><strong>Reporting Period:</strong> {periodLabel}</p>
         </div>
       </header>
 
@@ -33,13 +45,16 @@ const ClientReportDocument = () => {
         <h2 className="text-xl font-semibold mb-3">
           Executive Summary
         </h2>
+
         <p className="text-gray-700 leading-relaxed">
           During the reporting period, a total of{" "}
-          <strong>{KPI_SUMMARY.totalHours}</strong> was spent on the project.
-          The average activity level recorded was{" "}
-          <strong>{KPI_SUMMARY.avgActivity}</strong>, with{" "}
-          <strong>{KPI_SUMMARY.tasksCompleted}</strong> tasks completed.
-          The project is currently progressing as planned.
+          <strong>{formatMinutes(summary.total_minutes)}</strong>{" "}
+          was logged with an average productivity of{" "}
+          <strong>{summary.avg_activity}%</strong>.{" "}
+          Idle time accounted for{" "}
+          <strong>{summary.idle_minutes} minutes</strong>, and{" "}
+          <strong>{summary.screenshots}</strong>{" "}
+          screenshots were captured.
         </p>
       </section>
 
@@ -51,75 +66,48 @@ const ClientReportDocument = () => {
 
         <table className="w-full border border-gray-300 text-sm">
           <tbody>
-            <MetricRow label="Total Hours Worked" value={KPI_SUMMARY.totalHours} />
-            <MetricRow label="Average Activity" value={KPI_SUMMARY.avgActivity} />
-            <MetricRow label="Tasks Completed" value={KPI_SUMMARY.tasksCompleted} />
-            <MetricRow label="Estimated Earnings" value={KPI_SUMMARY.earnings} />
+            <MetricRow label="Total Hours Worked" value={formatMinutes(summary.total_minutes)} />
+            <MetricRow label="Average Activity" value={`${summary.avg_activity}%`} />
+            <MetricRow label="Idle Time" value={`${summary.idle_minutes} min`} />
+            <MetricRow label="Screenshots Captured" value={summary.screenshots} />
           </tbody>
         </table>
       </section>
 
-      {/* ================= TASK BREAKDOWN ================= */}
+      {/* ================= DAILY ACTIVITY ================= */}
       <section className="mb-10">
         <h2 className="text-xl font-semibold mb-4">
-          Task Breakdown
+          Daily Activity Breakdown
         </h2>
 
         <table className="w-full border border-gray-300 text-sm">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border px-3 py-2 text-left">Task</th>
-              <th className="border px-3 py-2">Estimated (hrs)</th>
-              <th className="border px-3 py-2">Actual (hrs)</th>
-              <th className="border px-3 py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {MOCK_TASKS.map((task) => (
-              <tr key={task.id}>
-                <td className="border px-3 py-2">{task.title}</td>
-                <td className="border px-3 py-2 text-center">
-                  {task.estimatedHours}
-                </td>
-                <td className="border px-3 py-2 text-center">
-                  {task.actualHours}
-                </td>
-                <td className="border px-3 py-2 text-center">
-                  {task.actualHours >= task.estimatedHours
-                    ? "In Progress"
-                    : "Completed"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      {/* ================= ACTIVITY SUMMARY ================= */}
-      <section className="mb-10">
-        <h2 className="text-xl font-semibold mb-3">
-          Activity Overview
-        </h2>
-
-        <p className="text-gray-700 mb-4">
-          The following table summarizes daily activity levels and hours worked
-          during the reporting period.
-        </p>
-
-        <table className="w-full border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-3 py-2">Day</th>
-              <th className="border px-3 py-2">Hours Worked</th>
+              <th className="border px-3 py-2">Date</th>
+              <th className="border px-3 py-2">Hours</th>
               <th className="border px-3 py-2">Activity (%)</th>
+              <th className="border px-3 py-2">Idle (min)</th>
+              <th className="border px-3 py-2">Screenshots</th>
             </tr>
           </thead>
           <tbody>
-            {MOCK_ACTIVITY_DATA.map((day) => (
-              <tr key={day.name}>
-                <td className="border px-3 py-2 text-center">{day.name}</td>
-                <td className="border px-3 py-2 text-center">{day.hours}</td>
-                <td className="border px-3 py-2 text-center">{day.activity}</td>
+            {days.map((d) => (
+              <tr key={d.date}>
+                <td className="border px-3 py-2 text-center">
+                  {new Date(d.date).toLocaleDateString()}
+                </td>
+                <td className="border px-3 py-2 text-center">
+                  {formatMinutes(d.total_minutes)}
+                </td>
+                <td className="border px-3 py-2 text-center">
+                  {d.avg_activity}%
+                </td>
+                <td className="border px-3 py-2 text-center">
+                  {d.idle_minutes}
+                </td>
+                <td className="border px-3 py-2 text-center">
+                  {d.screenshots}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -129,15 +117,15 @@ const ClientReportDocument = () => {
       {/* ================= FOOTER ================= */}
       <footer className="border-t pt-6 text-sm text-gray-600">
         <p>
-          This report was automatically generated from tracked project activity
-          data and is intended for client review purposes only.
+          This report was automatically generated from tracked activity data and
+          is intended for client review purposes only.
         </p>
       </footer>
     </div>
   );
 };
 
-/* ===== Helpers ===== */
+/* ================= SMALL HELPERS ================= */
 
 const MetricRow = ({ label, value }) => (
   <tr>

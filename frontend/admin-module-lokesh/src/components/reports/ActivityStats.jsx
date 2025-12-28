@@ -1,7 +1,51 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { Keyboard, Mouse } from "lucide-react";
 
-const ActivityStats = () => {
+const ActivityStats = ({ date }) => {
+  const [stats, setStats] = useState({
+    keyboard: 0,
+    mouse: 0,
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  const userId = 1;
+
+  useEffect(() => {
+    if (!date) return;
+
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+
+        // convert Date object → YYYY-MM-DD
+        const dateStr =
+          date instanceof Date
+            ? date.toLocaleDateString("en-CA")
+            : date;
+
+        const res = await fetch(
+          `http://localhost:5000/api/activity-stats?user_id=${userId}&date=${dateStr}`
+        );
+
+        const data = await res.json();
+
+        console.log("🔥 Activity stats:", data);
+
+        setStats({
+          keyboard: Number(data.keyboard || 0),
+          mouse: Number(data.mouse || 0),
+        });
+      } catch (err) {
+        console.error("Failed to fetch activity stats", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, [date]);
+
   return (
     <div
       className="
@@ -13,7 +57,7 @@ const ActivityStats = () => {
       "
     >
       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-200 mb-4">
-        Activity Stats (Mock)
+        Activity Stats
       </h3>
 
       <div className="grid grid-cols-2 gap-6">
@@ -27,7 +71,7 @@ const ActivityStats = () => {
               Keyboard Strokes
             </p>
             <p className="text-xl font-bold text-slate-900 dark:text-white">
-              3,245
+              {loading ? "—" : stats.keyboard.toLocaleString()}
             </p>
           </div>
         </div>
@@ -42,7 +86,7 @@ const ActivityStats = () => {
               Mouse Clicks
             </p>
             <p className="text-xl font-bold text-slate-900 dark:text-white">
-              1,892
+              {loading ? "—" : stats.mouse.toLocaleString()}
             </p>
           </div>
         </div>

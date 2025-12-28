@@ -6,7 +6,14 @@ const ClientLayout = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="flex min-h-screen bg-slate-900 dark:bg-slate-900 bg-slate-100 text-slate-900 dark:text-slate-200 transition-colors">
+    <div
+      className="
+        flex min-h-screen
+        bg-slate-50 text-slate-900
+        dark:bg-slate-900 dark:text-slate-200
+        transition-colors
+      "
+    >
       {/* Sidebar */}
       <ClientSidebar />
 
@@ -28,6 +35,7 @@ const ClientLayout = () => {
           </button>
         </header>
 
+        {/* Page Content */}
         <main className="flex-1 px-8 pb-8 overflow-y-auto">
           <Outlet />
         </main>
