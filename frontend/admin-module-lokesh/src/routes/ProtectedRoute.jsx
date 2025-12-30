@@ -1,9 +1,16 @@
 import { Navigate } from "react-router-dom";
+import { getCurrentUser } from "../auth/authService";
 
 const ProtectedRoute = ({ allowedRole, children }) => {
-  const role = localStorage.getItem("role");
+  const user = getCurrentUser();
 
-  if (role !== allowedRole) {
+  // Not logged in
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Role mismatch
+  if (user.role !== allowedRole) {
     return <Navigate to="/" replace />;
   }
 

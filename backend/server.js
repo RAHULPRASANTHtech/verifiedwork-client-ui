@@ -13,6 +13,8 @@ app.use(
     credentials: true,
   })
 );
+const trackingRoutes = require("./routes/tracking");
+app.use("/api/tracking", trackingRoutes);
 
 
 app.use(express.json());

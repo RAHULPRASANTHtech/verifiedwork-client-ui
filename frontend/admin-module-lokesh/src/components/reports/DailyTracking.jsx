@@ -141,7 +141,8 @@ function transformEntriesToGrid(entries) {
 
 
       {/* ACTIVITY STATS */}
-      <ActivityStats date={selectedDate} />
+      <ActivityStats date={selectedDate.toLocaleDateString("en-CA")} />
+
 
 
       {/* TIME GRID */}

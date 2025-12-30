@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import ProfileDropdown from "../../pages/client/ProfileDropdown";
 
-const ClientSidebar = () => {
+const ClientSidebar = ({ user }) => {
   const location = useLocation();
   const [reportsOpen, setReportsOpen] = useState(
     location.pathname.includes("/client/reports")
@@ -72,7 +72,7 @@ const ClientSidebar = () => {
 
       {/* Profile */}
       <div className="border-t border-slate-200 dark:border-slate-800 pt-4 mt-auto">
-        <ProfileDropdown />
+        <ProfileDropdown user={user} />   {/* 🔑 PASS USER */}
       </div>
     </aside>
   );

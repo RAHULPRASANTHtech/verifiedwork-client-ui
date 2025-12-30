@@ -8,12 +8,8 @@ const ScreenshotDetailsModal = ({ shot, onClose }) => {
     time,
     activity = 0,
     app,
-    duration,
-    task,
-    sessionId,
-    url,
-    keyboard,
-    mouse,
+    keyboard = 0,
+    mouse = 0,
     activityHistory = [],
   } = shot;
 
@@ -88,31 +84,11 @@ const ScreenshotDetailsModal = ({ shot, onClose }) => {
 
             {/* QUICK STATS */}
             <div className="grid grid-cols-2 gap-4">
-              <Stat label="Duration" value={duration || "10 min"} />
-              <Stat label="Session" value={sessionId || "—"} />
-              <Stat label="Keyboard" value={keyboard ?? "—"} />
-              <Stat label="Mouse" value={mouse ?? "—"} />
+              <Stat label="Duration" value="10 min" />
+              <Stat label="Session" value="Active (10 min slot)" />
+              <Stat label="Keyboard" value={keyboard} />
+              <Stat label="Mouse" value={mouse} />
             </div>
-
-            {task && (
-              <div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Task
-                </p>
-                <p className="font-medium">{task}</p>
-              </div>
-            )}
-
-            {url && (
-              <div className="truncate">
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  URL
-                </p>
-                <p className="text-blue-600 dark:text-blue-400 truncate">
-                  {url}
-                </p>
-              </div>
-            )}
 
             {/* ACTIVITY HISTORY */}
             <div>

@@ -18,19 +18,13 @@ const ActivityStats = ({ date }) => {
       try {
         setLoading(true);
 
-        // convert Date object → YYYY-MM-DD
-        const dateStr =
-          date instanceof Date
-            ? date.toLocaleDateString("en-CA")
-            : date;
-
         const res = await fetch(
-          `http://localhost:5000/api/activity-stats?user_id=${userId}&date=${dateStr}`
+          `http://localhost:5000/api/activity-stats?user_id=${userId}&date=${date}`
         );
 
         const data = await res.json();
 
-        console.log("🔥 Activity stats:", data);
+        console.log("Activity stats:", data);
 
         setStats({
           keyboard: Number(data.keyboard || 0),
@@ -53,7 +47,6 @@ const ActivityStats = ({ date }) => {
         border border-slate-200 dark:border-slate-700
         p-6 rounded-xl
         shadow-sm dark:shadow-black/20
-        transition-colors
       "
     >
       <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-200 mb-4">
